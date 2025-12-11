@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  java-demo:
+    build: .
+    image: java-docker-demo:1.0
+    container_name: java-demo
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
