@@ -19,9 +19,6 @@ COPY --from=build /app/target/java-docker-demo-1.0.0.jar /app/app.jar
 EXPOSE 8080
 
 
-# Небольшой healthcheck (опционально)
-HEALTHCHECK --interval=10s --timeout=3s --start-period=5s CMD curl -f http://localhost:8080/ || exit 1
-
 
 # Команда запуска
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
