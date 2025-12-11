@@ -1,24 +1,15 @@
-# 1) Stage: build with Maven
-FROM maven:3.9.5-eclipse-temurin-17 AS build
+# Stage build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
-# Копируем исходники
+RUN mvn -B -DskipTests dependency:go-offline
 COPY src ./src
-# Собираем jar
-RUN mvn -q -DskipTests package
+RUN mvn -B -DskipTests package
+RUN ls -la /app/target    # <-- добавлено для отладки, можно убрать позже
 
-
-# 2) Stage: минимальный runtime
+# Stage runtime
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-# Копируем собранный jar из предыдущего stage
-COPY --from=build /app/target/java-docker-demo-1.0.0.jar /app/app.jar
-
-
-# Пробрасываем порт
+COPY --from=build /app/target/*.jar /app/app.jar
 EXPOSE 8080
-
-
-
-# Команда запуска
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
